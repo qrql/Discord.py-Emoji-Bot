@@ -65,7 +65,7 @@ def setCropModeForUserId(user_id, value):
 		_conn.execute("UPDATE users SET crop_mode = (?) WHERE user_id LIKE (?)", (value, user_id))
 
 def setCropModeForUser(user, value):
-	return setCropModeForUser(user.id, value)
+	return setCropModeForUserId(user.id, value)
 
 def getBlockSizeForUserId(user_id):
 	value = _conn.execute("SELECT block_size FROM users WHERE user_id LIKE (?)", (user_id,)).fetchone()
