@@ -38,8 +38,8 @@ class EmojiBotClient(discord.Client):
 						errMsg = "Invalid arguments"
 					except Exception as e:
 						if config["debug_mode"]:
-							errMsg = str(e)
-						_emojiBotMasterLogger.error("Exception in command {} triggered by message {} by author {} : {}".format(commandString, message, message.author, e))
+							errMsg = "{} {}".format(type(e), e)
+						_emojiBotMasterLogger.error("Exception in command {} triggered by message {} by author {} : {} {}".format(commandString, message, message.author, type(e), e))
 					if not success:
 						_emojiBotMasterLogger.info("Command {} failed triggered by message {} by author {}".format(commandString, message, message.author))
 						await message.channel.send(errMsg)
