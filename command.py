@@ -3,7 +3,7 @@ import logging
 commands = {}
 commandAliases = {}
 
-_commandLogger = logging.getLogger("EmojiBot.Commands")
+_commandLogger = logging.getLogger("EmojiBot.Command")
 
 def getCommand(commandName):
 	if commandName.lower() in commands:

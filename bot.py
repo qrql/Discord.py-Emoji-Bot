@@ -5,7 +5,7 @@ if config["debug_mode"]:
 	logging.basicConfig(level = logging.INFO)
 else:
 	logging.basicConfig(level = logging.WARNING)
-import commands
+import command
 
 _emojiBotMasterLogger = logging.getLogger("EmojiBot")
 
@@ -18,8 +18,8 @@ class EmojiBotClient(discord.Client):
 			if len(splitContent) > 0:
 				commandString = splitContent[0]
 				args = splitContent[1] if len(splitContent) == 2 else ""
-				command = commands.getCommand(commandString)
-				if command is None:
+				commandClass = command.getCommand(commandString)
+				if commandClass is None:
 					if config["debug_mode"]:
 						await message.channel.send("No such command '{}'".format(commandString))
 					_emojiBotMasterLogger.info("Miss on command {} by user {}".format(commandString, message.author))
@@ -27,14 +27,14 @@ class EmojiBotClient(discord.Client):
 					_emojiBotMasterLogger.info("Hit on command {} by user {}".format(commandString, message.author))
 					success, errMsg = False, "Something went wrong"
 					try:
-						commandInstance = command(message, args)
+						commandInstance = commandClass(message, args)
 						if await commandInstance.authorHasPermission():
 							await commandInstance.validateArguments()
 							await commandInstance.callback()
 							success = True
-					except commands.InvalidSyntaxException:
+					except command.InvalidSyntaxException:
 						errMsg = "Invalid command syntax"
-					except commands.InvalidArgumentException:
+					except command.InvalidArgumentException:
 						errMsg = "Invalid arguments"
 					except Exception as e:
 						if config["debug_mode"]:
