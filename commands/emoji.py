@@ -107,3 +107,8 @@ class Finalize(Command):
 		for section in range(0, len(emojiString) // 2000 + 1):
 			substr = emojiString[section*2000:(section+1)*2000]
 			await targetChannel.send(substr)
+
+		database.setImageForUser(self.author, None)
+		database.setEmojiNameForUser(self.author, None)
+		database.setCropModeForUser(self.author, 0)
+		database.setBlockSizeForUser(self.author, 128)
