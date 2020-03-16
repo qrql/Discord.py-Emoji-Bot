@@ -84,7 +84,7 @@ def setBlockSizeForUserId(user_id, value):
 		_conn.execute("UPDATE users SET block_size = (?) WHERE user_id LIKE (?)", (value, user_id))
 
 def setBlockSizeForUser(user, value):
-	return setBlockSizeForUser(user.id, value)
+	return setBlockSizeForUserId(user.id, value)
 
 def getEmojiNameForUserId(user_id):
 	value = _conn.execute("SELECT emoji_name FROM users WHERE user_id LIKE (?)", (user_id,)).fetchone()
