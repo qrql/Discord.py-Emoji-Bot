@@ -6,6 +6,7 @@ if config["debug_mode"]:
 else:
 	logging.basicConfig(level = logging.WARNING)
 import command
+import commands.utility
 
 _emojiBotMasterLogger = logging.getLogger("EmojiBot")
 
