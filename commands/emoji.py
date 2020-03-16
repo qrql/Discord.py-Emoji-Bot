@@ -21,6 +21,14 @@ class SetImage(Command):
 			return await self.message.channel.send("Error: Image is already set. Use `{token}abort` to restart the emoji block creation.".format(token = config["command_token"]))
 		database.setImageForUser(self.author, img.getvalue())
 
+class SetEmojiName(Command):
+	async def validateArguments(self):
+		if len(self.args) != 1 or len(self.args[0]) < 2:
+			raise InvalidArgumentException("Only argument must be a string of at least 2 characters")
+
+	async def callback(self):
+		database.setEmojiNameForUser(self.author, self.args[0])
+
 class GetImage(Command):
 	async def callback(self):
 		img = database.getImageForUser(self.author)
