@@ -1,0 +1,77 @@
+import sqlite3
+from config import config
+_conn = sqlite3.connect(config["database"])
+_conn.row_factory = sqlite3.Row
+import io
+
+_conn.execute("""
+	CREATE TABLE IF NOT EXISTS guilds
+	(
+		guild_id INTEGER PRIMARY KEY,
+		command_token STRING NOT NULL DEFAULT "!"
+	);
+""")
+_conn.execute("""
+	CREATE TABLE IF NOT EXISTS users
+	(
+		user_id INTEGER PRIMARY KEY,
+		image BLOB,
+		crop_mode INTEGER DEFAULT 0,
+		block_size INTEGER DEFAULT 128
+	);
+""")
+
+def _createUserIfNull(user_id):
+	try:
+		_conn.execute("INSERT INTO users (user_id) VALUES (?)", (user_id,))
+	except sqlite3.IntegrityError:
+		pass
+
+def getImageForUserId(user_id):
+	blob = _conn.execute("SELECT image FROM users WHERE user_id LIKE (?)", (user_id,)).fetchone()
+	if blob:
+		return io.BytesIO(blob["image"])
+	return None
+
+def getImageForUser(user):
+	return getImageForUserId(user.id )
+
+def setImageForUserId(user_id, imageBytes):
+	_createUserIfNull(user_id)
+	with _conn:
+		_conn.execute("UPDATE users SET image = (?) WHERE user_id LIKE (?)", (imageBytes, user_id))
+
+def setImageForUser(user, image):
+	return setImageForUserId(user.id, image)
+
+def getCropModeForUserId(user_id):
+	value = _conn.execute("SELECT crop_mode FROM users WHERE user_id LIKE (?)", (user_id)).fetchone()
+	if value:
+		return value["crop_mode"]
+	return 0
+
+def getCropModeForUser(user):
+	return getCropModeForUserId(user)
+
+def setCropModeForUserId(user_id, value):
+	if value < 0 or value > 1:
+		raise ValueError("Out of constraints")
+	_createUserIfNull(user_id)
+	with _conn:
+		_conn.execute("UPDATE users SET crop_mode = (?) WHERE user_id LIKE (?)", (value, user_id))
+
+def getBlockSizeForUserId(user_id):
+	value = _conn.execute("SELECT block_size FROM users WHERE user_id LIKE (?)", (user_id)).fetchone()
+	if value:
+		return value["block_size"]
+	return 128
+
+def getBlockSizeForUser(user):
+	return getBlockSizeForUserId(user)
+
+def setBlockSizeForUserId(user_id, value):
+	if value < 0 or value > 1:
+		raise ValueError("Out of constraints")
+	_createUserIfNull(user_id)
+	with _conn:
+		_conn.execute("UPDATE users SET block_size = (?) WHERE user_id LIKE (?)", (value, user_id))
