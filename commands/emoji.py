@@ -5,6 +5,7 @@ from PIL import Image
 import database
 import io
 from config import config
+import math
 
 class SetImage(Command):
 	async def callback(self):
@@ -41,3 +42,53 @@ class GetImage(Command):
 class Abort(Command):
 	async def callback(self):
 		database.setImageForUser(self.author, None)
+
+class Finalize(Command):
+	async def callback(self):
+		# TODO:
+		# implement crop mode
+		if len(self.client.guilds) >= 10:
+			return await self.channel.send("Error: Cannot create guilds at the moment. Please try again later.")
+		rawImage = database.getImageForUser(self.author)
+		if rawImage is None:
+			return await self.channel.send("Error: No image set. Use `{token}setimage` and attach the image to set one.".format(token = config["command_token"]))
+		emojiName = database.getEmojiNameForUser(self.author)
+		if emojiName is None:
+			return await self.channel.send("Error: Emoji name not set. Use `{token}setemojiname name` to set a name.")
+
+		baseImage = Image.open(rawImage)
+		blockSize = database.getBlockSizeForUser(self.author)
+		(width, height) = baseImage.size
+
+		diffX, diffY = width % blockSize, height % blockSize
+		newWidth, newHeight = width - diffX, height - diffY
+		offsetX, offsetY = diffX / 2, diffY / 2
+		chunkAlignmentTuple = (math.ceil(offsetX), math.ceil(offsetY), width - math.floor(offsetX), height - math.floor(offsetY))
+
+		centeredChunkAlignedImage = baseImage.crop(chunkAlignmentTuple)
+
+		files = []
+		for y in range(0, newHeight // blockSize):
+			for x in range(0, newWidth // blockSize):
+				newFile = io.BytesIO()
+				section = centeredChunkAlignedImage.crop((x * blockSize, y * blockSize, (x+1) * blockSize, (y+1) * blockSize))
+				section.save(newFile, "png")
+				files.append(newFile)
+		
+		await self.channel.send("Creating guilds. This may take a minute.")
+
+		invite_urls = []
+		for guildNumber in range(0, len(files) // 50 + 1):
+			# TODO:
+			# This can fail if either len(files) // 50 + 1 < 10 - len(self.client.guilds) or someone else runs finalize while this is being executed
+			# Implement a queue
+			newGuild = await self.client.create_guild("Emoji Bot Server {} {}".format(emojiName, guildNumber))
+			for emojiNumber in range(50 * guildNumber, 50 * (guildNumber + 1)):
+				if emojiNumber < len(files):
+					file = files[emojiNumber]
+					await newGuild.create_custom_emoji(name = "{}{}".format(emojiName, emojiNumber), image = file.getvalue())
+			channel = await newGuild.create_text_channel("general")
+			invite = await channel.create_invite()
+			invite_urls.append(invite.url)
+
+		await self.channel.send("\n".join(invite_urls))
