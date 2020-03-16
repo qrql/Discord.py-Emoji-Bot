@@ -29,7 +29,7 @@ def _createUserIfNull(user_id):
 
 def getImageForUserId(user_id):
 	blob = _conn.execute("SELECT image FROM users WHERE user_id LIKE (?)", (user_id,)).fetchone()
-	if blob:
+	if blob and "image" in blob:
 		return io.BytesIO(blob["image"])
 	return None
 
