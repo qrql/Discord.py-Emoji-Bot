@@ -29,3 +29,7 @@ class GetImage(Command):
 		else:
 			fileobj = discord.File(img, filename = "img.png")
 			return await self.message.channel.send("Your image", file = fileobj)
+
+class Abort(Command):
+	async def callback(self):
+		database.setImageForUser(self.author, None)
