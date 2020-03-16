@@ -37,7 +37,8 @@ class InvalidArgumentException(Exception):
 	pass
 
 class Command(metaclass = CommandMetaclass):
-	def __init__(self, message, argString):
+	def __init__(self, client, message, argString):
+		self.client = client
 		self.message = message
 		self.author = message.author
 		self.channel = message.channel

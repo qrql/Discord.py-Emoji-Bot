@@ -30,7 +30,7 @@ class EmojiBotClient(discord.Client):
 					_emojiBotMasterLogger.info("Hit on command {} by user {}".format(commandString, message.author))
 					success, errMsg = False, "Something went wrong"
 					try:
-						commandInstance = commandClass(message, args)
+						commandInstance = commandClass(self, message, args)
 						if await commandInstance.authorHasPermission():
 							await commandInstance.validateArguments()
 							await commandInstance.callback()
