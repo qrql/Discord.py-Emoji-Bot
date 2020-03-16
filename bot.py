@@ -7,6 +7,7 @@ else:
 	logging.basicConfig(level = logging.WARNING)
 import command
 import commands.utility
+import commands.emoji
 
 _emojiBotMasterLogger = logging.getLogger("EmojiBot")
 
