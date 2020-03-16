@@ -48,7 +48,7 @@ def setImageForUser(user, image):
 	return setImageForUserId(user.id, image)
 
 def getCropModeForUserId(user_id):
-	value = _conn.execute("SELECT crop_mode FROM users WHERE user_id LIKE (?)", (user_id)).fetchone()
+	value = _conn.execute("SELECT crop_mode FROM users WHERE user_id LIKE (?)", (user_id,)).fetchone()
 	if value:
 		return value["crop_mode"]
 	return 0
@@ -64,7 +64,7 @@ def setCropModeForUserId(user_id, value):
 		_conn.execute("UPDATE users SET crop_mode = (?) WHERE user_id LIKE (?)", (value, user_id))
 
 def getBlockSizeForUserId(user_id):
-	value = _conn.execute("SELECT block_size FROM users WHERE user_id LIKE (?)", (user_id)).fetchone()
+	value = _conn.execute("SELECT block_size FROM users WHERE user_id LIKE (?)", (user_id,)).fetchone()
 	if value:
 		return value["block_size"]
 	return 128
