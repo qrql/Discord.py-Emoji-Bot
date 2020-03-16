@@ -68,15 +68,21 @@ class Finalize(Command):
 		centeredChunkAlignedImage = baseImage.crop(chunkAlignmentTuple)
 
 		files = []
+		emojiString = ""
+		i = 0
 		for y in range(0, newHeight // blockSize):
 			for x in range(0, newWidth // blockSize):
 				newFile = io.BytesIO()
 				section = centeredChunkAlignedImage.crop((x * blockSize, y * blockSize, (x+1) * blockSize, (y+1) * blockSize))
 				section.save(newFile, "png")
 				files.append(newFile)
+				emojiString += "\\:{}{}\\:".format(emojiName, i)
+				i += 1
+			emojiString += "\n"
 		
 		await self.channel.send("Creating guilds. This may take a minute.")
 
+		guilds = []
 		invite_urls = []
 		for guildNumber in range(0, len(files) // 50 + 1):
 			# TODO:
@@ -89,6 +95,12 @@ class Finalize(Command):
 					await newGuild.create_custom_emoji(name = "{}{}".format(emojiName, emojiNumber), image = file.getvalue())
 			channel = await newGuild.create_text_channel("general")
 			invite = await channel.create_invite()
+			guilds.append(newGuild)
 			invite_urls.append(invite.url)
 
+
 		await self.channel.send("\n".join(invite_urls))
+		targetChannel = guilds[len(guilds) - 1].channels[0]
+		for section in range(0, len(emojiString) // 2000 + 1):
+			substr = emojiString[section*2000:(section+1)*2000]
+			await targetChannel.send(substr)
