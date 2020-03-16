@@ -42,6 +42,9 @@ class GetImage(Command):
 class Abort(Command):
 	async def callback(self):
 		database.setImageForUser(self.author, None)
+		database.setEmojiNameForUser(self.author, None)
+		database.setCropModeForUser(self.author, 0)
+		database.setBlockSizeForUser(self.author, 128)
 
 class Finalize(Command):
 	async def callback(self):
