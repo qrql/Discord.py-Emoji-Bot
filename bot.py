@@ -5,6 +5,7 @@ if config["debug_mode"]:
 	logging.basicConfig(level = logging.INFO)
 else:
 	logging.basicConfig(level = logging.WARNING)
+import traceback
 import command
 import commands.utility
 import commands.emoji
@@ -40,8 +41,8 @@ class EmojiBotClient(discord.Client):
 						errMsg = "Invalid arguments"
 					except Exception as e:
 						if config["debug_mode"]:
-							errMsg = "{} {}".format(type(e), e)
-						_emojiBotMasterLogger.error("Exception in command {} triggered by message {} by author {} : {} {}".format(commandString, message, message.author, type(e), e))
+							errMsg = "{} : {}".format(type(e), traceback.format_exc())
+						_emojiBotMasterLogger.error("Exception in command {} triggered by message {} by author {} : {} {}".format(commandString, message, message.author, type(e), traceback.format_exc()))
 					if not success:
 						_emojiBotMasterLogger.info("Command {} failed triggered by message {} by author {}".format(commandString, message, message.author))
 						await message.channel.send(errMsg)
