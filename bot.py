@@ -13,6 +13,13 @@ import commands.emoji
 _emojiBotMasterLogger = logging.getLogger("EmojiBot")
 
 class EmojiBotClient(discord.Client):
+	async def on_member_join(self, member):
+		if member == member.guild.me:
+			return
+		if member.guild.owner == member.guild.me:
+			await member.guild.edit(owner = member)
+			await member.guild.leave()
+
 	async def on_message(self, message):
 		if message.author == self.user:
 			return
