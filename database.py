@@ -39,7 +39,10 @@ def getImageForUser(user):
 def setImageForUserId(user_id, imageBytes):
 	_createUserIfNull(user_id)
 	with _conn:
-		_conn.execute("UPDATE users SET image = (?) WHERE user_id LIKE (?)", (imageBytes, user_id))
+		if imageBytes is None:
+			_conn.execute("UPDATE users SET image = NULL WHERE user_id LIKE (?)", (user_id,))
+		else:
+			_conn.execute("UPDATE users SET image = (?) WHERE user_id LIKE (?)", (imageBytes, user_id))
 
 def setImageForUser(user, image):
 	return setImageForUserId(user.id, image)
