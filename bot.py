@@ -12,6 +12,10 @@ import commands.emoji
 
 _emojiBotMasterLogger = logging.getLogger("EmojiBot")
 
+# TODO
+# Auto-leave created guilds after a threshold if not joined (30s?)
+# Add and respect guild specific command tokens
+
 class EmojiBotClient(discord.Client):
 	async def on_member_join(self, member):
 		if member == member.guild.me:
