@@ -7,7 +7,8 @@ class Help(Command):
 		await self.channel.send(textwrap.dedent("""
 			`{token}create emojiname` : start creating an emoji block
 			`{token}setimage image_url` : set the image
-			`{token}cropmode (crop|pad)` changes the mode, defaulting to crop.
+			`{token}setemojiname NAME` : set the image name
+			`{token}cropmode (crop|pad) (WIP)` changes the mode, defaulting to crop.
 				crop : crop pixels from the image to reaching a multiple of block size
 				pad  : pad pixels to the image to reach a multiple of the block size
 			`{token}blocksize N` changes the block size to X by X pixels, defaulting to 128.
