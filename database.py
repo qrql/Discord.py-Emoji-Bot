@@ -17,7 +17,8 @@ _conn.execute("""
 		user_id INTEGER PRIMARY KEY,
 		image BLOB,
 		crop_mode INTEGER DEFAULT 0,
-		block_size INTEGER DEFAULT 128
+		block_size INTEGER DEFAULT 128,
+		emoji_name STRING
 	);
 """)
 
@@ -78,3 +79,20 @@ def setBlockSizeForUserId(user_id, value):
 	_createUserIfNull(user_id)
 	with _conn:
 		_conn.execute("UPDATE users SET block_size = (?) WHERE user_id LIKE (?)", (value, user_id))
+
+def getEmojiNameForUserId(user_id):
+	value = _conn.execute("SELECT emoji_name FROM users WHERE user_id LIKE (?)", (user_id,)).fetchone()
+	if value:
+		return value["emoji_name"]
+	return None
+
+def getEmojiNameForUser(user):
+	return getEmojiNameForUserId(user.id)
+
+def setEmojiNameForUserId(user_id, value):
+	_createUserIfNull(user_id)
+	with _conn:
+		if value is None:
+			_conn.execute("UPDATE users SET emoji_name = NULL WHERE user_id LIKE (?)", (user_id,))
+		else:
+			_conn.execute("UPDATE users SET emoji_name = (?) WHERE user_id LIKE (?)", (value, user_id))
