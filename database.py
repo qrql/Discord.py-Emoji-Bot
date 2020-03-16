@@ -54,7 +54,7 @@ def getCropModeForUserId(user_id):
 	return 0
 
 def getCropModeForUser(user):
-	return getCropModeForUserId(user)
+	return getCropModeForUserId(user.id)
 
 def setCropModeForUserId(user_id, value):
 	if value < 0 or value > 1:
@@ -70,7 +70,7 @@ def getBlockSizeForUserId(user_id):
 	return 128
 
 def getBlockSizeForUser(user):
-	return getBlockSizeForUserId(user)
+	return getBlockSizeForUserId(user.id)
 
 def setBlockSizeForUserId(user_id, value):
 	if value < 0 or value > 1:
