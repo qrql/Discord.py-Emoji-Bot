@@ -18,11 +18,27 @@ class EmojiBotClient(discord.Client):
 				if command is None:
 					if config["debug_mode"]:
 						await message.channel.send("No such command '{}'".format(commandString))
-					_emojiBotMasterLogger.debug("Miss on command {} by user {}".format(commandString, message.author))
+					_emojiBotMasterLogger.info("Miss on command {} by user {}".format(commandString, message.author))
 				else:
-					_emojiBotMasterLogger.debug("Hit on command {} by user {}".format(commandString, message.author))
-
-
+					_emojiBotMasterLogger.info("Hit on command {} by user {}".format(commandString, message.author))
+					success, errMsg = False, "Something went wrong"
+					try:
+						commandInstance = command(message, args)
+						if await commandInstance.authorHasPermission():
+							await commandInstance.validateArguments()
+							await commandInstance.callback()
+							success = True
+					except commands.InvalidSyntaxException:
+						errMsg = "Invalid command syntax"
+					except commands.InvalidArgumentException:
+						errMsg = "Invalid arguments"
+					except Exception as e:
+						if config["debug_mode"]:
+							errMsg = str(e)
+						_emojiBotMasterLogger.error("Exception in command {} triggered by message {} by author {} : {}".format(commandString, message, message.author, e))
+					if not success:
+						_emojiBotMasterLogger.info("Command {} failed triggered by message {} by author {}".format(commandString, message, message.author))
+						await message.channel.send(errMsg)
 
 if __name__ == "__main__":
 	clientInstance = EmojiBotClient()
