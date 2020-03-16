@@ -64,6 +64,9 @@ def setCropModeForUserId(user_id, value):
 	with _conn:
 		_conn.execute("UPDATE users SET crop_mode = (?) WHERE user_id LIKE (?)", (value, user_id))
 
+def setCropModeForUser(user, value):
+	return setCropModeForUser(user.id, value)
+
 def getBlockSizeForUserId(user_id):
 	value = _conn.execute("SELECT block_size FROM users WHERE user_id LIKE (?)", (user_id,)).fetchone()
 	if value:
@@ -79,6 +82,9 @@ def setBlockSizeForUserId(user_id, value):
 	_createUserIfNull(user_id)
 	with _conn:
 		_conn.execute("UPDATE users SET block_size = (?) WHERE user_id LIKE (?)", (value, user_id))
+
+def setBlockSizeForUser(user, value):
+	return setBlockSizeForUser(user.id, value)
 
 def getEmojiNameForUserId(user_id):
 	value = _conn.execute("SELECT emoji_name FROM users WHERE user_id LIKE (?)", (user_id,)).fetchone()
@@ -96,3 +102,6 @@ def setEmojiNameForUserId(user_id, value):
 			_conn.execute("UPDATE users SET emoji_name = NULL WHERE user_id LIKE (?)", (user_id,))
 		else:
 			_conn.execute("UPDATE users SET emoji_name = (?) WHERE user_id LIKE (?)", (value, user_id))
+
+def setEmojiNameForUser(user, value):
+	return setEmojiNameForUserId(user.id, value)
