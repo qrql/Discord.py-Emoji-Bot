@@ -83,6 +83,9 @@ class Finalize(Command):
 
 		centeredChunkAlignedImage = baseImage.crop(chunkAlignmentTuple)
 
+		if newWidth // blockSize == 0 or newHeight // blockSize == 0:
+			return await self.channel.send("Image is not big enough. Try a smaller size or abort emoji block creation.")
+
 		files = []
 		emojiString = ""
 		i = 0
