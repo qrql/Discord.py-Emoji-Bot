@@ -30,6 +30,23 @@ class SetEmojiName(Command):
 	async def callback(self):
 		database.setEmojiNameForUser(self.author, self.args[0])
 
+class SetBlockSize(Command):
+	def getArguments(self):
+		try:
+			return [int(self.argString)]
+		except:
+			raise InvalidSyntaxException()
+
+	async def validateArguments(self):
+		if self.args[0] < 16:
+			raise InvalidArgumentException()
+		return self.args
+
+	async def callback(self):
+		if database.getImageForUser(self.author) is None:
+			return await self.message.channel.send("Error: No image set. Use `{token}setimage` first.")
+		database.setBlockSizeForUser(self.author, self.args[0])
+
 class GetImage(Command):
 	async def callback(self):
 		img = database.getImageForUser(self.author)
