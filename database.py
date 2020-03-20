@@ -77,7 +77,7 @@ def getBlockSizeForUser(user):
 	return getBlockSizeForUserId(user.id)
 
 def setBlockSizeForUserId(user_id, value):
-	if value < 0 or value > 128:
+	if value < 1:
 		raise ValueError("Out of constraints")
 	_createUserIfNull(user_id)
 	with _conn:
