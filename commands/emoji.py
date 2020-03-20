@@ -39,6 +39,19 @@ class GetImage(Command):
 			fileobj = discord.File(img, filename = "img.png")
 			return await self.message.channel.send("Your image", file = fileobj)
 
+class CleanServers(Command):
+	async def callback(self):
+		i = 0
+		for guild in [guild for guild in self.client.guilds if guild.owner is self.client.user]:
+			i += 1
+			await guild.delete()
+		msg = "Error: No guilds to delete"
+		if i == 1:
+			msg = "Successfully deleted 1 guild"
+		elif i > 1:
+			msg = ("Successfully deleted {} guilds".format(i))
+		return await self.channel.send(msg)
+
 class Abort(Command):
 	async def callback(self):
 		database.setImageForUser(self.author, None)
