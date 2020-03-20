@@ -42,7 +42,7 @@ class GetImage(Command):
 class CleanServers(Command):
 	async def callback(self):
 		i = 0
-		for guild in [guild for guild in self.client.guilds if guild.owner is self.client.user]:
+		for guild in [guild for guild in self.client.guilds if guild.owner.id is self.client.user.id]:
 			i += 1
 			await guild.delete()
 		msg = "Error: No guilds to delete"
